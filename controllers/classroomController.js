@@ -35,7 +35,7 @@ const addStudentToClassroom = async (req, res) => {
   try {
     const { classroomId } = req.params;
     const { studentId } = req.body;
-    
+
     const classroom = await Classroom.findById(classroomId);
     if (!classroom) {
       return res.status(404).json({ message: "Classroom not found" });
@@ -84,10 +84,69 @@ const removeStudentFromClassroom = async (req, res) => {
   }
 };
 
+const viewClassrooms = async (req, res) => {
+  try {
+    const { teacherId } = req.params;
+
+    // user should be a teacher
+    const user = await User.findById(teacherId);
+    if (!user || user.role !== "teacher") {
+      return res
+        .status(403)
+        .json({ message: "Unauthorized. Only teachers can view classrooms." });
+    }
+
+    const classrooms = await Classroom.find({ teacherId });
+    res.status(200).json(classrooms);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+const editClassroom = async (req, res) => {
+  try {
+    const { classroomId } = req.params;
+    const { classroomName } = req.body;
+
+    const updatedClassroom = await Classroom.findByIdAndUpdate(
+      classroomId,
+      { name: classroomName },
+      { new: true }
+    );
+    if (!updatedClassroom) {
+      return res.status(404).json({ message: "Classroom not found." });
+    }
+    res
+      .status(200)
+      .json({
+        message: "Classroom updated successfully.",
+        classroom: updatedClassroom,
+      });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+const deleteClassroom = async (req, res) => {
+  try {
+    const { classroomId } = req.params;
+
+    const deletedClassroom = await Classroom.findByIdAndDelete(classroomId);
+    if (!deletedClassroom) {
+      return res.status(404).json({ message: "Classroom not found." });
+    }
+
+    res.status(200).json({ message: "Classroom deleted successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
 
 module.exports = {
   createClassroom,
   addStudentToClassroom,
   removeStudentFromClassroom,
-  
+  viewClassrooms,
+  editClassroom,
+  deleteClassroom,
 };

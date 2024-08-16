@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const app = express();
 const auth = require('./routes/auth'); 
 const classroomRoutes = require('./routes/classroomRoutes');
+const taskRoutes = require('./routes/taskRoutes');
 
 // middleware
 app.use(express.json());
@@ -12,7 +13,7 @@ app.use(express.urlencoded({extended: false}));
 // routes
 app.use('/api', auth);
 app.use('/api', classroomRoutes); 
-
+app.use('api', taskRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello from Node API Server Updated");
