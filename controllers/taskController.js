@@ -2,6 +2,7 @@
 const Task = require('../models/task.model');
 const Classroom = require('../models/classroom.model');
 const User = require('../models/user.model');
+const Submission = require('../models/submission.model');
 
 const assignTask = async (req, res) => {
   try {
@@ -33,4 +34,24 @@ const assignTask = async (req, res) => {
   }
 };
 
-module.exports = { assignTask };
+
+const taskSubmissionStatus = async (req, res) => {
+  try {
+    const { classroomId, taskId } = req.params;
+
+    const submissions = await Submission.find({ classroomId, taskId }).populate('studentId', 'name');
+    
+    const response = submissions.map(submission => ({
+      studentId: submission.studentId._id,
+      studentName: submission.studentId.name,
+      status: submission.submitted ? 'submitted' : 'pending'
+    }));
+
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
+module.exports = { assignTask , taskSubmissionStatus };
