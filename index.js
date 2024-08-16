@@ -4,6 +4,7 @@ const app = express();
 const auth = require('./routes/auth'); 
 const classroomRoutes = require('./routes/classroomRoutes');
 const taskRoutes = require('./routes/taskRoutes');
+const studentRoutes = require('./routes/studentRoutes');
 
 // middleware
 app.use(express.json());
@@ -14,6 +15,7 @@ app.use(express.urlencoded({extended: false}));
 app.use('/api', auth);
 app.use('/api', classroomRoutes); 
 app.use('/api', taskRoutes);
+app.use('/api', studentRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello from Node API Server Updated");
