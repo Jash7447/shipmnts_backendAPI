@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 const auth = require('./routes/auth'); 
+const classroomRoutes = require('./routes/classroomRoutes');
 
 // middleware
 app.use(express.json());
@@ -10,7 +11,7 @@ app.use(express.urlencoded({extended: false}));
 
 // routes
 app.use('/api', auth);
-
+app.use('/api', classroomRoutes); 
 
 
 app.get("/", (req, res) => {
