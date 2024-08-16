@@ -19,7 +19,31 @@ const viewClassrooms = async (req, res) => {
     }
   };
 
+const viewTasks = async (req, res) => {
+    try {
+      const { studentId, classroomId } = req.params;
+  
+      const classroom = await Classroom.findById(classroomId);
+      if (!classroom || !classroom.students.includes(studentId)) {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+  
+      const tasks = await Task.find({ classroomId });
+      const response = tasks.map(task => ({
+        taskId: task._id,
+        title: task.title,
+        description: task.description,
+        dueDate: task.dueDate
+      }));
+  
+      res.status(200).json(response);
+    } catch (error) {
+      res.status(500).json({ message: 'Server error', error: error.message });
+    }
+  };
+  
+  
   module.exports = {
-    viewClassrooms
+    viewClassrooms, viewTasks
   };
   
